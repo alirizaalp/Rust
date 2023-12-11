@@ -1,67 +1,55 @@
-use std::io;
 
-
-enum Operation {
-    Add(f64, f64),
-    Subtract(f64, f64),
-    Multiply(f64, f64),
-    Divide(f64, f64),
+#[allow(dead_code)] //I USED IT TO INDICATE THAT IT SHOULD NOT BE USED ANYWHERE.
+struct BankAccount {
+    account_number: u32,
+    holder_name: String,
+    balance: f64,
 }
 
+trait Account {
+    fn deposit(&mut self, amount: f64);
+    fn withdraw(&mut self, amount: f64);
+    fn balance(&self) -> f64;
+}
 
-fn calculate(op: &Operation) -> f64 {
+impl Account for BankAccount {
+    fn deposit(&mut self, amount: f64) {
+        self.balance += amount;
+    }
 
-    match op {
-        Operation::Add(x, y) => x + y,
-        Operation::Subtract(x, y) => x - y,
-        Operation::Multiply(x, y) => x * y,
-        Operation::Divide(x, y) => {
-            if *y != 0.0 {
-                x / y
-            } else {
-                println!("Error: Division by zero");
-                f64::NAN
-            }
+    fn withdraw(&mut self, amount: f64) {
+        if amount <= self.balance {
+            self.balance -= amount;
+        } else {
+            println!("Insufficient funds");
         }
+    }
+
+    fn balance(&self) -> f64 {
+        self.balance
     }
 }
 
 fn main() {
- 
-    println!("Enter the first number:");
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).expect("Failed to read input");
-    let first_number: f64 = input.trim().parse().expect("Invalid input");
-
-  
-    println!("Enter the operation (+, -, *, /):");
-    let mut operation_input = String::new();
-    io::stdin().read_line(&mut operation_input).expect("Failed to read input");
-    let operation = operation_input.trim();
-
-
-    println!("Enter the second number:");
-    input.clear();
-    io::stdin().read_line(&mut input).expect("Failed to read input");
-    let second_number: f64 = input.trim().parse().expect("Invalid input");
-
- 
-    let user_operation = match operation {
-        "+" => Operation::Add(first_number, second_number),
-        "-" => Operation::Subtract(first_number, second_number),
-        "*" => Operation::Multiply(first_number, second_number),
-        "/" => Operation::Divide(first_number, second_number),
-        _ => {
-            println!("Error: Invalid operation");
-            return;
-        }
+    
+    let mut account1 = BankAccount {
+        account_number: 1,
+        holder_name: String::from("ALİ RIZA ALP"),
+        balance: 1000.0,
     };
 
+    let mut account2 = BankAccount {
+        account_number: 2,
+        holder_name: String::from("ALİ RIZA ALP"),
+        balance: 500.0,
+    };
 
-    let result = calculate(&user_operation);
+ 
+    account1.deposit(200.0);
 
+  
+    account2.withdraw(100.0);
 
-    println!("Result: {}", result);
+    println!("Account 1 Balance: {}", account1.balance());
+    println!("Account 2 Balance: {}", account2.balance());
 }
-
-
